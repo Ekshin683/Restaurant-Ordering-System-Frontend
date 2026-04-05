@@ -334,6 +334,26 @@
   color: white;
 }
 
+.guest-order-box {
+  width: 100%;
+  border-radius: 18px;
+  background: #faf6f4;
+  border: 1px solid #ead8d3;
+  padding: 16px;
+}
+
+.guest-order-box p {
+  margin: 0 0 12px 0;
+  color: #5d4b47;
+  line-height: 1.5;
+}
+
+.guest-order-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .product-grid {

@@ -39,7 +39,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate(`/login?redirect=${encodeURIComponent(`/menu/${id}`)}`);
       return;
     }
 
@@ -227,25 +227,47 @@ const ProductDetail = () => {
 
             {/* Quantity & Add to Cart */}
             <div className="product-footer">
-              <div className="quantity-selector">
-                <button
-                  className="qty-btn"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                >
-                  −
-                </button>
-                <span className="qty-value">{quantity}</span>
-                <button className="qty-btn" onClick={() => setQuantity(quantity + 1)}>
-                  +
-                </button>
-              </div>
+              {isAuthenticated ? (
+                <>
+                  <div className="quantity-selector">
+                    <button
+                      className="qty-btn"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    >
+                      −
+                    </button>
+                    <span className="qty-value">{quantity}</span>
+                    <button className="qty-btn" onClick={() => setQuantity(quantity + 1)}>
+                      +
+                    </button>
+                  </div>
 
-              <button
-                className={`btn btn-primary add-order-btn ${addedToCart ? 'success' : ''}`}
-                onClick={handleAddToCart}
-              >
-                {addedToCart ? '✓ Added to Cart' : `Add to Order — ₹${totalPrice.toFixed(2)}`}
-              </button>
+                  <button
+                    className={`btn btn-primary add-order-btn ${addedToCart ? 'success' : ''}`}
+                    onClick={handleAddToCart}
+                  >
+                    {addedToCart ? '✓ Added to Cart' : `Add to Order — ₹${totalPrice.toFixed(2)}`}
+                  </button>
+                </>
+              ) : (
+                <div className="guest-order-box">
+                  <p>Browse freely. To place an order, please login or create an account.</p>
+                  <div className="guest-order-actions">
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => navigate(`/login?redirect=${encodeURIComponent(`/menu/${id}`)}`)}
+                    >
+                      Login to Order
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => navigate(`/register?redirect=${encodeURIComponent(`/menu/${id}`)}`)}
+                    >
+                      Register
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

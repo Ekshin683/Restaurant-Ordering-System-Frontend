@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
@@ -14,6 +14,8 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
 
   const handleChange = (e) => {
     setFormData({
@@ -44,7 +46,7 @@ const Register = () => {
     const result = await register(formData.name, formData.email, formData.password);
 
     if (result.success) {
-      navigate('/');
+      navigate(redirectTo);
     } else {
       setError(result.message);
     }
@@ -152,7 +154,7 @@ const Register = () => {
             <div className="auth-footer">
               <p>
                 Already eating with us?{' '}
-                <Link to="/login" className="auth-link">
+                <Link to={`/login?redirect=${encodeURIComponent(redirectTo)}`} className="auth-link">
                   Sign in instead
                 </Link>
               </p>

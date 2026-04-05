@@ -91,6 +91,12 @@ const Menu = () => {
   };
 
   const handleAddToCart = (item) => {
+    if (!isAuthenticated) {
+      const redirectPath = `${window.location.pathname}${window.location.search}`;
+      navigate(`/login?redirect=${encodeURIComponent(redirectPath)}`);
+      return;
+    }
+
     addToCart(item);
     setAddedItems({ ...addedItems, [item._id]: true });
     setTimeout(() => {
@@ -258,16 +264,22 @@ const Menu = () => {
                     </div>
                     <h3>{featuredItem.name}</h3>
                     <p>{featuredItem.description || 'A rich house favorite curated by our chefs.'}</p>
-                    {isAuthenticated && featuredItem.available ? (
+
+                    {featuredItem.available ? (
                       <button
                         className={`btn btn-primary ${addedItems[featuredItem._id] ? 'btn-success' : ''}`}
-                        onClick={() => handleAddToCart(featuredItem)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(featuredItem);
+                        }}
                       >
-                        {addedItems[featuredItem._id] ? 'Added to Cart' : 'Add to Order'}
+                        {!isAuthenticated
+                          ? 'Login or Register to Order'
+                          : (addedItems[featuredItem._id] ? 'Added to Cart' : 'Add to Order')}
                       </button>
                     ) : (
-                      <span className={`availability ${featuredItem.available ? 'available' : 'unavailable'}`}>
-                        {featuredItem.available ? 'Login to add this dish' : 'Currently unavailable'}
+                      <span className="availability unavailable">
+                        Currently unavailable
                       </span>
                     )}
                   </div>
@@ -306,17 +318,21 @@ const Menu = () => {
                         {item.category && <span className="dish-category">{item.category}</span>}
                       </div>
 
-                      {isAuthenticated && item.available ? (
+                      {item.available ? (
                         <button
                           className={`icon-cart-btn ${addedItems[item._id] ? 'added' : ''}`}
-                          onClick={() => handleAddToCart(item)}
-                          aria-label={`Add ${item.name} to cart`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(item);
+                          }}
+                          aria-label={isAuthenticated ? `Add ${item.name} to cart` : `Login or register to order ${item.name}`}
+                          title={isAuthenticated ? 'Add to cart' : 'Login or register to order'}
                         >
-                          {addedItems[item._id] ? '✓' : '+'}
+                          {isAuthenticated ? (addedItems[item._id] ? '✓' : '+') : '→'}
                         </button>
                       ) : (
-                        <span className={`availability ${item.available ? 'available' : 'unavailable'}`}>
-                          {item.available ? 'Login to add' : 'Unavailable'}
+                        <span className="availability unavailable">
+                          Unavailable
                         </span>
                       )}
                     </div>

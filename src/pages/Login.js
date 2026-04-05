@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
@@ -12,6 +12,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
 
   const handleChange = (e) => {
     setFormData({
@@ -29,7 +31,7 @@ const Login = () => {
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
-      navigate('/');
+      navigate(redirectTo);
     } else {
       setError(result.message);
     }
@@ -119,7 +121,7 @@ const Login = () => {
             <div className="auth-footer">
               <p>
                 New to Bawarchi?{' '}
-                <Link to="/register" className="auth-link">
+                <Link to={`/register?redirect=${encodeURIComponent(redirectTo)}`} className="auth-link">
                   Create an account
                 </Link>
               </p>
