@@ -33,13 +33,6 @@ const Cart = () => {
     }));
   };
 
-  const handleQuantityChange = (itemId, newQuantity) => {
-    const quantity = parseInt(newQuantity);
-    if (quantity >= 0) {
-      updateQuantity(itemId, quantity);
-    }
-  };
-
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
       setError('Your cart is empty');

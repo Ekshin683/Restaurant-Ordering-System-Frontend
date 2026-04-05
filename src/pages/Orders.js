@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { orderAPI } from '../services/api';
 import './Orders.css';
 
@@ -20,11 +20,7 @@ const Orders = () => {
   const [filter, setFilter] = useState('');
   const [reviewDrafts, setReviewDrafts] = useState({});
 
-  useEffect(() => {
-    fetchOrders();
-  }, [filter]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -48,7 +44,11 @@ const Orders = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const getStatusColor = (status) => {
     switch (status) {

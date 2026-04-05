@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { menuAPI } from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -45,20 +45,7 @@ const Menu = () => {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    fetchMenuItems();
-  }, [filters]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await menuAPI.getCategories();
-      setCategories(response.data.categories);
-    } catch (err) {
-      console.error('Error fetching categories:', err);
-    }
-  };
-
-  const fetchMenuItems = async () => {
+  const fetchMenuItems = useCallback(async () => {
     setLoading(true);
     setError('');
     setFailedImages({}); // Clear failed images when fetching new items
@@ -74,6 +61,19 @@ const Menu = () => {
       setError(message);
     } finally {
       setLoading(false);
+    }
+  }, [filters.category, filters.search]);
+
+  useEffect(() => {
+    fetchMenuItems();
+  }, [fetchMenuItems]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await menuAPI.getCategories();
+      setCategories(response.data.categories);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
     }
   };
 

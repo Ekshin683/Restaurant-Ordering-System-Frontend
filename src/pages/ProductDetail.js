@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { menuAPI } from '../services/api';
 import { useCart } from '../context/CartContext';
@@ -20,11 +20,7 @@ const ProductDetail = () => {
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  useEffect(() => {
-    fetchMenuItemDetail();
-  }, [id]);
-
-  const fetchMenuItemDetail = async () => {
+  const fetchMenuItemDetail = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -35,7 +31,11 @@ const ProductDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchMenuItemDetail();
+  }, [fetchMenuItemDetail]);
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
@@ -160,22 +160,20 @@ const ProductDetail = () => {
             </p>
 
             {/* Preparation Level */}
-            {prepLevels.includes(menuItem.category) || true && (
-              <div className="customization-section">
-                <h3>Preparation Level</h3>
-                <div className="prep-buttons">
-                  {prepLevels.map((prep) => (
-                    <button
-                      key={prep}
-                      className={`prep-btn ${selectedPrep === prep ? 'active' : ''}`}
-                      onClick={() => setSelectedPrep(prep)}
-                    >
-                      {prep}
-                    </button>
-                  ))}
-                </div>
+            <div className="customization-section">
+              <h3>Preparation Level</h3>
+              <div className="prep-buttons">
+                {prepLevels.map((prep) => (
+                  <button
+                    key={prep}
+                    className={`prep-btn ${selectedPrep === prep ? 'active' : ''}`}
+                    onClick={() => setSelectedPrep(prep)}
+                  >
+                    {prep}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
 
             {/* Select Sides */}
             {availableSides.length > 0 && (
